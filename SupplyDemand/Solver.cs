@@ -7,7 +7,7 @@ namespace SupplyDemand
 {
     public class Solver
     {
-        private List<Supplier> supply;
+        private List<Supply> supply;
 
         public Dictionary<int, int> remainingCapacity { get; private set; }
 
@@ -29,7 +29,7 @@ namespace SupplyDemand
             }
         }
 
-        public Solver(List<Supplier> supply, List<Demand> demands)
+        public Solver(List<Supply> supply, List<Demand> demands)
         {
             this.supply = supply;
             this.demands = demands;
@@ -74,9 +74,9 @@ namespace SupplyDemand
             // foreach unallocated demand
             foreach (var demand in this.demands.Where(d => d.Allocation == null))
             {
-                foreach (var preference in demand.Preference)
+                foreach (var preference in demand.SupplyPreference)
                 {
-                    if (HasCapacity(preference))
+                    if (HasCapacity(preference) && ConstraintsMatch(this.supply.Single(s => s.Id == preference).Categories, demand.Category))
                     {
                         demand.Allocation = preference;
                         this.remainingCapacity[preference]--;
@@ -90,52 +90,39 @@ namespace SupplyDemand
             return complete;
         }
 
-        private bool HasCapacity(int i)
-        {
-            return (this.remainingCapacity[i] > 0);
-        }
-
-        private bool CheckConstraints(DemanderOptions so, SupplierOptions co)
-        {
-            if ( (co & SupplierOptions.Premium) != 0 )
-            {
-                return (so & DemanderOptions.Premium) != 0;
-            }
-
-            return true;
-        }
-
         private bool ReshuffleAll()
         {
             bool complete = true;
 
-            var unallocated = this.demands.Where(d => d.Allocation == null);
-            var allocated = this.demands.Where(d => d.Allocation != null);
+            var unallocated = this.demands.Where(d => !d.IsAllocated());
+            var allocated = this.demands.Where(d => d.IsAllocated());
 
             foreach (var demand in unallocated)
             {
-                var candidates = allocated.Where(a => demand.Preference.Contains(a.Allocation.Value));
+                var candidates = allocated.Where(a => demand.SupplyPreference.Contains(a.Allocation.Value));
                 var orderedCandidates = candidates.OrderBy(c => c.AllocatedPreference());
 
                 foreach (var candidate in orderedCandidates)
                 {
-                    var candidateAllocation = candidate.Allocation.Value;
+                    var currentAllocation = candidate.Allocation.Value;
 
                     // possible reallocation?
-                    foreach (var candidatePreference in candidate.Preference)
+                    foreach (var newSupplyId in candidate.SupplyPreference)
                     {
-                        if (candidatePreference == candidateAllocation || !HasCapacity(candidatePreference))
+                        if (newSupplyId == currentAllocation
+                            || !HasCapacity(newSupplyId)
+                            || !ConstraintsMatch(this.supply.Single(s => s.Id == newSupplyId).Categories, candidate.Category)
+                            || !ConstraintsMatch(this.supply.Single(s => s.Id == currentAllocation).Categories, demand.Category))
                         {
-                            // skip the already allocated preference
                             continue;
                         }
 
                         // yes -> reallocate!
-                        this.remainingCapacity[candidatePreference]--;
-                        candidate.Allocation = candidatePreference;
+                        this.remainingCapacity[newSupplyId]--;
+                        candidate.Allocation = newSupplyId;
 
                         // allocate demand
-                        demand.Allocation = candidateAllocation;
+                        demand.Allocation = currentAllocation;
                         this.Reshuffles++;
                         break;
                     }
@@ -157,12 +144,12 @@ namespace SupplyDemand
                 return false;
             }
 
-            foreach (var demand in this.demands.Where(d => d.Allocation == null).OrderBy(r => random.Next(1000)))
+            foreach (var demand in this.demands.Where(d => !d.IsAllocated()).OrderBy(r => random.Next(1000)))
             {
                 foreach (var c in this.remainingCapacity.ToList())
                 {
-                    var cOptions = supply.Single(s => s.Id == c.Key).Options;
-                    if (CheckConstraints(demand.Options, cOptions) && HasCapacity(c.Key))
+                    var supplyConstraints = supply.Single(s => s.Id == c.Key).Categories;
+                    if (ConstraintsMatch(supplyConstraints, demand.Category) && HasCapacity(c.Key))
                     {
                         demand.Allocation = c.Key;
                         this.remainingCapacity[c.Key]--;
@@ -173,6 +160,16 @@ namespace SupplyDemand
             }
 
             return complete;
+        }
+
+        private bool HasCapacity(int i)
+        {
+            return (this.remainingCapacity[i] > 0);
+        }
+
+        private bool ConstraintsMatch(ConstraintCategories supplyConstraints, int demandCategory)
+        {
+            return supplyConstraints == null || supplyConstraints.Match(demandCategory);
         }
     }
 }

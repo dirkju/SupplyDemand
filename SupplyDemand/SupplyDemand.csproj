@@ -40,8 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="Supplier.cs" />
+    <Compile Include="ConstraintCategories.cs" />
+    <Compile Include="Supply.cs" />
     <Compile Include="Demand.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

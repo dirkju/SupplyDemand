@@ -11,9 +11,9 @@ namespace SupplyDemand
 
         public int Id { get; set; }
 
-        public int[] Preference { get; set; }
+        public int[] SupplyPreference { get; set; }
 
-        public DemanderOptions Options { get; set; }
+        public int Category { get; set; }
 
         public int? Allocation { get; set; }
 
@@ -24,15 +24,15 @@ namespace SupplyDemand
 
         public int AllocatedPreference()
         {
-            for (int i = 0; i < this.Preference.Count(); i++)
+            for (int i = 0; i < this.SupplyPreference.Count(); i++)
             {
-                if (this.Allocation == this.Preference[i])
+                if (this.Allocation == this.SupplyPreference[i])
                 {
                     return i;
                 }
             }
 
-            return this.Preference.Count() + 1;
+            return this.SupplyPreference.Count() + 1;
         }
     }
 }

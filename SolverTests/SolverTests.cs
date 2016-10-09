@@ -11,8 +11,26 @@ namespace Tests
         [TestMethod]
         public void SolverSolvesTrivial()
         {
-            var supply = new List<Supplier> { new Supplier { Id = 0, Capacity = 1 } };
-            var demand = new Demand() { Id = 1, Allocation = null, Preference = new int[] { 0 } };
+            var supply = new List<Supply> { new Supply { Id = 0, Capacity = 1 } };
+            var demand = new Demand() { Id = 1, Allocation = null, SupplyPreference = new int[] { 0 } };
+            var solver = new Solver(supply, new List<Demand> { demand });
+            Assert.IsTrue(solver.Solve());
+        }
+
+        [TestMethod]
+        public void SolverNotSolvesTrivialConstraint()
+        {
+            var supply = new List<Supply> { new Supply { Id = 0, Capacity = 1, Categories = new ConstraintCategories(27) } };
+            var demand = new Demand() { Id = 1, Allocation = null, SupplyPreference = new int[] { 0 } };
+            var solver = new Solver(supply, new List<Demand> { demand });
+            Assert.IsFalse(solver.Solve());
+        }
+
+        [TestMethod]
+        public void SolverSolvesTrivialConstraint()
+        {
+            var supply = new List<Supply> { new Supply { Id = 0, Capacity = 1, Categories = new ConstraintCategories(27) } };
+            var demand = new Demand() { Id = 1, Allocation = null, SupplyPreference = new int[] { 0 }, Category = 27 };
             var solver = new Solver(supply, new List<Demand> { demand });
             Assert.IsTrue(solver.Solve());
         }
@@ -20,16 +38,16 @@ namespace Tests
         [TestMethod]
         public void SolverSolvesSimple()
         {
-            var supply = new List<Supplier> {
-                new Supplier { Id = 1, Capacity = 1 },
-                new Supplier { Id = 2, Capacity = 2 },
-                new Supplier { Id = 3, Capacity = 1 },
+            var supply = new List<Supply> {
+                new Supply { Id = 1, Capacity = 1 },
+                new Supply { Id = 2, Capacity = 2 },
+                new Supply { Id = 3, Capacity = 1 },
             };
             var demands = new List<Demand> {
-                new Demand() { Id = 10, Allocation = null, Preference = new int[] { 2, 1, 3 } },
-                new Demand() { Id = 11, Allocation = null, Preference = new int[] { 2, 1, 3 } },
-                new Demand() { Id = 12, Allocation = null, Preference = new int[] { 2, 1, 3 } },
-                new Demand() { Id = 13, Allocation = null, Preference = new int[] { 2, 1, 3 } },
+                new Demand() { Id = 10, Allocation = null, SupplyPreference = new int[] { 2, 1, 3 } },
+                new Demand() { Id = 11, Allocation = null, SupplyPreference = new int[] { 2, 1, 3 } },
+                new Demand() { Id = 12, Allocation = null, SupplyPreference = new int[] { 2, 1, 3 } },
+                new Demand() { Id = 13, Allocation = null, SupplyPreference = new int[] { 2, 1, 3 } },
             };
 
             var solver = new Solver(supply, demands);
@@ -40,18 +58,18 @@ namespace Tests
         [TestMethod]
         public void SolverSolvesWithReshuffle()
         {
-            var supply = new List<Supplier> {
-                new Supplier { Id = 0, Capacity = 1 },
-                new Supplier { Id = 1, Capacity = 2 },
-                new Supplier { Id = 2, Capacity = 1 },
-                new Supplier { Id = 3, Capacity = 1 },
+            var supply = new List<Supply> {
+                new Supply { Id = 0, Capacity = 1 },
+                new Supply { Id = 1, Capacity = 2 },
+                new Supply { Id = 2, Capacity = 1 },
+                new Supply { Id = 3, Capacity = 1 },
             };
             var demands = new List<Demand> {
-                new Demand() { Id = 10, Allocation = null, Preference = new int[] { 1, 0, 2 } },
-                new Demand() { Id = 11, Allocation = null, Preference = new int[] { 1, 3, 2 } },
-                new Demand() { Id = 12, Allocation = null, Preference = new int[] { 1, 0, 2 } },
-                new Demand() { Id = 13, Allocation = null, Preference = new int[] { 1, 0, 2 } },
-                new Demand() { Id = 13, Allocation = null, Preference = new int[] { 1, 0, 2 } },
+                new Demand() { Id = 10, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
+                new Demand() { Id = 11, Allocation = null, SupplyPreference = new int[] { 1, 3, 2 } },
+                new Demand() { Id = 12, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
+                new Demand() { Id = 13, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
+                new Demand() { Id = 13, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
             };
 
             var solver = new Solver(supply, demands);
@@ -62,19 +80,19 @@ namespace Tests
         [TestMethod]
         public void SolverSolvesForcedWithConstraints()
         {
-            var supply = new List<Supplier> {
-                new Supplier { Id = 0, Capacity = 1 },
-                new Supplier { Id = 1, Capacity = 2 },
-                new Supplier { Id = 2, Capacity = 1 },
-                new Supplier { Id = 3, Capacity = 2, Options = SupplierOptions.Premium },
+            var supply = new List<Supply> {
+                new Supply { Id = 0, Capacity = 1 },
+                new Supply { Id = 1, Capacity = 2 },
+                new Supply { Id = 2, Capacity = 1 },
+                new Supply { Id = 3, Capacity = 2, Categories = new ConstraintCategories(5) },
             };
             var demands = new List<Demand> {
-                new Demand() { Id = 10, Allocation = null, Preference = new int[] { 1, 0, 2 } },
-                new Demand() { Id = 11, Allocation = null, Preference = new int[] { 1, 3, 2 } },
-                new Demand() { Id = 12, Allocation = null, Preference = new int[] { 1, 0, 2 } },
-                new Demand() { Id = 13, Allocation = null, Preference = new int[] { 1, 0, 2 } },
-                new Demand() { Id = 13, Allocation = null, Preference = new int[] { 1, 0, 2 } },
-                new Demand() { Id = 13, Allocation = null, Preference = new int[] { 1, 0, 2 } },
+                new Demand() { Id = 10, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
+                new Demand() { Id = 11, Allocation = null, SupplyPreference = new int[] { 1, 3, 2 } },
+                new Demand() { Id = 12, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
+                new Demand() { Id = 13, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
+                new Demand() { Id = 13, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
+                new Demand() { Id = 13, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
             };
 
             var solver = new Solver(supply, demands);
@@ -90,10 +108,10 @@ namespace Tests
             var maxSuppliers = 25;
 
             var random = new Random(1234);
-            var supply = new List<Supplier>();
+            var supply = new List<Supply>();
             for (int i = 0; i < maxSuppliers; i++)
             {
-                var c = new Supplier { Id = i };
+                var c = new Supply { Id = i };
                 c.Capacity = random.Next(18) + 17;
                 supply.Add(c);
             }
@@ -103,14 +121,14 @@ namespace Tests
             for (int i = 0; i < maxStudents; i++)
             {
                 var d = new Demand() { Id = i, Allocation = null };
-                d.Preference = new int[maxPreferences];
+                d.SupplyPreference = new int[maxPreferences];
 
                 for (int j = 0; j < maxPreferences; j++)
                 {
                     do
                     {
-                        d.Preference[j] = (int)(Math.Sqrt(random.Next(maxSuppliers * maxSuppliers)));
-                    } while (j > 0 && d.Preference[j - 1] == d.Preference[j]);
+                        d.SupplyPreference[j] = (int)(Math.Sqrt(random.Next(maxSuppliers * maxSuppliers)));
+                    } while (j > 0 && d.SupplyPreference[j - 1] == d.SupplyPreference[j]);
                 }
 
                 demands.Add(d);
