@@ -43,7 +43,6 @@
     <Compile Include="ConstraintCategories.cs" />
     <Compile Include="Supply.cs" />
     <Compile Include="Demand.cs" />
-    <Compile Include="Options.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Solver.cs" />
   </ItemGroup>
