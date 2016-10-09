@@ -76,7 +76,7 @@ namespace SupplyDemand
             {
                 foreach (var preference in demand.SupplyPreference)
                 {
-                    if (HasCapacity(preference) && ConstraintsMatch(this.supply.Single(s => s.Id == preference).Categories, demand.Category))
+                    if (HasCapacity(preference) && this.supply.Single(s => s.Id == preference).IsCategoryMatched(demand.Category))
                     {
                         demand.Allocation = preference;
                         this.remainingCapacity[preference]--;
@@ -111,8 +111,8 @@ namespace SupplyDemand
                     {
                         if (newSupplyId == currentAllocation
                             || !HasCapacity(newSupplyId)
-                            || !ConstraintsMatch(this.supply.Single(s => s.Id == newSupplyId).Categories, candidate.Category)
-                            || !ConstraintsMatch(this.supply.Single(s => s.Id == currentAllocation).Categories, demand.Category))
+                            || !this.supply.Single(s => s.Id == newSupplyId).IsCategoryMatched(candidate.Category)
+                            || !this.supply.Single(s => s.Id == currentAllocation).IsCategoryMatched(demand.Category))
                         {
                             continue;
                         }
@@ -148,8 +148,7 @@ namespace SupplyDemand
             {
                 foreach (var c in this.remainingCapacity.ToList())
                 {
-                    var supplyConstraints = supply.Single(s => s.Id == c.Key).Categories;
-                    if (ConstraintsMatch(supplyConstraints, demand.Category) && HasCapacity(c.Key))
+                    if (supply.Single(s => s.Id == c.Key).IsCategoryMatched(demand.Category) && HasCapacity(c.Key))
                     {
                         demand.Allocation = c.Key;
                         this.remainingCapacity[c.Key]--;
@@ -165,11 +164,6 @@ namespace SupplyDemand
         private bool HasCapacity(int i)
         {
             return (this.remainingCapacity[i] > 0);
-        }
-
-        private bool ConstraintsMatch(ConstraintCategories supplyConstraints, int demandCategory)
-        {
-            return supplyConstraints == null || supplyConstraints.Match(demandCategory);
         }
     }
 }

@@ -40,7 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConstraintCategories.cs" />
     <Compile Include="Supply.cs" />
     <Compile Include="Demand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
