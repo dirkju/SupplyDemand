@@ -1,25 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace SupplyDemand
+namespace SupplyDemandSolver
 {
+    /// <summary>
+    /// The solver class.
+    /// </summary>
     public class Solver
     {
         private List<Supply> supply;
-
-        public Dictionary<int, int> remainingCapacity { get; private set; }
-
         private List<Demand> demands;
 
+        /// <summary>
+        /// Gets the remaining capacity per supply.
+        /// </summary>
+        /// <value>
+        /// The remaining capacity.
+        /// </value>
+        public Dictionary<int, int> RemainingCapacity { get; private set; }
+
+        /// <summary>
+        /// Gets the number of reshuffles performed by solver.
+        /// </summary>
+        /// <value>
+        /// The number of reshuffles.
+        /// </value>
         public long Reshuffles { get; private set; }
+
+        /// <summary>
+        /// Gets the total mismatch across all demands.
+        /// </summary>
+        /// <value>
+        /// The total mismatch.
+        /// </value>
         public long TotalMismatch {
             get { return this.demands.Where(d => d.Allocation != null).Select(d => d.AllocatedPreference()).Sum(); } }
 
+        /// <summary>
+        /// Gets the total unallocated demands.
+        /// </summary>
+        /// <value>
+        /// The total unallocated.
+        /// </value>
         public int TotalUnallocated {
             get { return this.demands.Where(d => d.Allocation == null).Count(); } }
 
+        /// <summary>
+        /// Gets the average mismatch for a demand.
+        /// </summary>
+        /// <value>
+        /// The average mismatch.
+        /// </value>
         public double AvgMismatch
         {
             get
@@ -29,20 +61,29 @@ namespace SupplyDemand
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Solver"/> class.
+        /// </summary>
+        /// <param name="supply">The list of supplies.</param>
+        /// <param name="demands">The list of demands.</param>
         public Solver(List<Supply> supply, List<Demand> demands)
         {
             this.supply = supply;
             this.demands = demands;
-            this.remainingCapacity = new Dictionary<int, int>();
+            this.RemainingCapacity = new Dictionary<int, int>();
 
             // calculate remaining capacity
             foreach (var s in supply)
             {
                 var allocatedCapacity = demands.Count(d => d.Allocation != null && d.Allocation == s.Id);
-                this.remainingCapacity.Add(s.Id, s.Capacity - allocatedCapacity);
+                this.RemainingCapacity.Add(s.Id, s.Capacity - allocatedCapacity);
             }
         }
 
+        /// <summary>
+        /// Solves the demands with supplies.
+        /// </summary>
+        /// <returns>True when completely matched, false otherwise.</returns>
         public bool Solve()
         {
             bool complete = false;
@@ -62,6 +103,10 @@ namespace SupplyDemand
             return complete;
         }
 
+        /// <summary>
+        /// Gets the resolved demands.
+        /// </summary>
+        /// <returns>The resolved demands.</returns>
         public IEnumerable<Demand> GetSolution()
         {
             return this.demands;
@@ -79,7 +124,7 @@ namespace SupplyDemand
                     if (HasCapacity(preference) && this.supply.Single(s => s.Id == preference).IsCategoryMatched(demand.Category))
                     {
                         demand.Allocation = preference;
-                        this.remainingCapacity[preference]--;
+                        this.RemainingCapacity[preference]--;
                         break;
                     }
                 }
@@ -118,7 +163,7 @@ namespace SupplyDemand
                         }
 
                         // yes -> reallocate!
-                        this.remainingCapacity[newSupplyId]--;
+                        this.RemainingCapacity[newSupplyId]--;
                         candidate.Allocation = newSupplyId;
 
                         // allocate demand
@@ -139,19 +184,19 @@ namespace SupplyDemand
             var complete = true;
             var random = new Random(27);
 
-            if (this.remainingCapacity.Values.Sum() == 0)
+            if (this.RemainingCapacity.Values.Sum() == 0)
             {
                 return false;
             }
 
             foreach (var demand in this.demands.Where(d => !d.IsAllocated()).OrderBy(r => random.Next(1000)))
             {
-                foreach (var c in this.remainingCapacity.ToList())
+                foreach (var c in this.RemainingCapacity.ToList())
                 {
                     if (supply.Single(s => s.Id == c.Key).IsCategoryMatched(demand.Category) && HasCapacity(c.Key))
                     {
                         demand.Allocation = c.Key;
-                        this.remainingCapacity[c.Key]--;
+                        this.RemainingCapacity[c.Key]--;
                     }
                 }
 
@@ -163,7 +208,7 @@ namespace SupplyDemand
 
         private bool HasCapacity(int i)
         {
-            return (this.remainingCapacity[i] > 0);
+            return (this.RemainingCapacity[i] > 0);
         }
     }
 }

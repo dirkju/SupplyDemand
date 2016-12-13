@@ -54,9 +54,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SupplyDemand\SupplyDemand.csproj">
+    <ProjectReference Include="..\SupplyDemand\SupplyDemandSolver.csproj">
       <Project>{7830b2e0-4283-46b8-9058-cab8da41e5ca}</Project>
-      <Name>SupplyDemand</Name>
+      <Name>SupplyDemandSolver</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

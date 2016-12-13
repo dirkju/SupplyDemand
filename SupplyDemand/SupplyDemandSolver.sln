@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupplyDemand", "SupplyDemand.csproj", "{7830B2E0-4283-46B8-9058-CAB8DA41E5CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupplyDemandSolver", "SupplyDemandSolver.csproj", "{7830B2E0-4283-46B8-9058-CAB8DA41E5CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "..\SolverTests\Tests.csproj", "{FF482133-7164-40EF-847E-5B432DA9BDE1}"
 EndProject
-Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "SupplyDemand.nupkg", "..\NuGetPackage\SupplyDemand.nupkg.nuproj", "{42139BCD-A1BD-4B5D-9BA7-416966747715}"
+Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "SupplyDemandSolver.nupkg", "..\NuGetPackage\SupplyDemandSolver.nupkg.nuproj", "{42139BCD-A1BD-4B5D-9BA7-416966747715}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

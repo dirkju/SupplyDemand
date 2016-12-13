@@ -18,13 +18,13 @@
   </PropertyGroup>
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
-    <Id>SupplyDemand</Id>
+    <Id>SupplyDemandSolver</Id>
     <Version>1.1.0</Version>
-    <Title>Supply Demand Solver</Title>
+    <Title>A Simple Supply Demand Solver</Title>
     <Authors>Dirk Junghanns</Authors>
     <Owners>Dirk Junghanns</Owners>
     <Summary>A simple Supply Demand matching algorithm.</Summary>
-    <Description>SupplyDemand is a simple Supply Demand matching algorithm. It supports supplier capacity, demand priorities for different suppliers as well as constraint categories to limit matching.</Description>
+    <Description>SupplyDemandSolver provides a simple Supply Demand matching algorithm. It supports supplier capacity, demand priorities for different suppliers as well as constraint categories to limit matching.</Description>
     <ReleaseNotes>
     </ReleaseNotes>
     <ProjectUrl>
@@ -32,13 +32,13 @@
     <LicenseUrl>
     </LicenseUrl>
     <Copyright>Copyright © Dirk Junghanns</Copyright>
-    <Tags>SupplyDemand</Tags>
+    <Tags>Supply, Demand, Solver, Matching</Tags>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SupplyDemand\SupplyDemand.csproj" />
+    <ProjectReference Include="..\SupplyDemand\SupplyDemandSolver.csproj" />
   </ItemGroup>
   <Import Project="$(NuProjPath)\NuProj.targets" />
 </Project>
