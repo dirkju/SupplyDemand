@@ -9,20 +9,34 @@ namespace Tests
     public class SolverTests
     {
         [TestMethod]
-        public void SolverSolvesTrivial()
+        public void SolverFailsHandlesMismatch()
         {
-            var supply = new List<Supply> { new Supply { Id = 0, Capacity = 1 } };
-            var demand = new Demand() { Id = 1, Allocation = null, SupplyPreference = new int[] { 0 } };
+            var supply = new List<Supply> { new Supply { Id = 15, Capacity = 1 } };
+            var demand = new Demand() { Id = 1, Allocation = null, SupplyPreference = new int[] { 12 } };
             var solver = new Solver(supply, new List<Demand> { demand });
             Assert.IsTrue(solver.Solve());
         }
 
         [TestMethod]
-        public void SolverNotSolvesTrivialConstraint()
+        public void SolverSolvesTrivial()
+        {
+            var supply = new List<Supply> { new Supply { Id = 15, Capacity = 1 } };
+            var demand = new Demand() { Id = 1, Allocation = null, SupplyPreference = new int[] { 15 } };
+            var solver = new Solver(supply, new List<Demand> { demand });
+            Assert.IsTrue(solver.Solve());
+        }
+
+        [TestMethod]
+        public void SolverHandlesTrivialConstraint()
         {
             var supply = new List<Supply> { new Supply { Id = 0, Capacity = 1, Categories = 0x04 } };
             var demand = new Demand() { Id = 1, Allocation = null, SupplyPreference = new int[] { 0 } };
             var solver = new Solver(supply, new List<Demand> { demand });
+            Assert.IsFalse(solver.Solve());
+
+            // check also when Id mismatch
+            demand = new Demand() { Id = 1, Allocation = null, SupplyPreference = new int[] { 18 } };
+            solver = new Solver(supply, new List<Demand> { demand });
             Assert.IsFalse(solver.Solve());
         }
 

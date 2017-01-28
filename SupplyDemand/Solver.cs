@@ -208,7 +208,12 @@ namespace SupplyDemandSolver
 
         private bool HasCapacity(int i)
         {
-            return (this.RemainingCapacity[i] > 0);
+            if (this.RemainingCapacity.ContainsKey(i))
+            {
+                return (this.RemainingCapacity[i] > 0);
+            }
+
+            return false;
         }
     }
 }
