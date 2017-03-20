@@ -145,7 +145,7 @@ namespace SupplyDemandSolver
             foreach (var demand in unallocated)
             {
                 var candidates = allocated.Where(a => demand.SupplyPreference.Contains(a.Allocation.Value));
-                var orderedCandidates = candidates.OrderBy(c => c.AllocatedPreference());
+                var orderedCandidates = candidates.OrderByDescending(c => c.AllocatedPreference());
 
                 foreach (var candidate in orderedCandidates)
                 {
