@@ -19,7 +19,7 @@
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>SupplyDemandSolver</Id>
-    <Version>1.1.1</Version>
+    <Version>1.1.4</Version>
     <Title>A Simple Supply Demand Solver</Title>
     <Authors>Dirk Junghanns</Authors>
     <Owners>Dirk Junghanns</Owners>

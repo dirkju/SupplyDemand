@@ -33,8 +33,8 @@ var demands = new List<Demand> {
     new Demand() { Id = 11, Allocation = null, SupplyPreference = new int[] { 1, 3, 2 } },
     new Demand() { Id = 12, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
     new Demand() { Id = 13, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
-    new Demand() { Id = 13, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
-    new Demand() { Id = 13, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
+    new Demand() { Id = 14, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
+    new Demand() { Id = 15, Allocation = null, SupplyPreference = new int[] { 1, 0, 2 } },
 };
 
 var solver = new Solver(supply, demands);
