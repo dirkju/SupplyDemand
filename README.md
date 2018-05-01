@@ -1,5 +1,4 @@
-
-![NuGet](https://img.shields.io/nuget/v/SupplyDemandSolver.svg?style=plastic)
+[![NuGet](https://img.shields.io/nuget/v/SupplyDemandSolver.svg?style=plastic)](https://www.nuget.org/packages/SupplyDemandSolver/)
 
 
 # SupplyDemand
