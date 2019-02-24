@@ -96,6 +96,11 @@ namespace SupplyDemandSolver
         /// <param name="demands">The list of demands.</param>
         public Solver(List<Supply> supply, List<Demand> demands)
         {
+            if (supply == null || demands == null || supply.Count == 0 || demands.Count == 0)
+            {
+                throw new ArgumentOutOfRangeException("Neither supply nor demand can be empty.");
+            }
+
             this.supply = supply;
             this.demands = demands;
             this.RemainingCapacity = new Dictionary<int, int>();
@@ -147,7 +152,20 @@ namespace SupplyDemandSolver
         private bool InitialAllocation()
         {
             var random = new Random(27);
-            var maxPrefs = this.demands.Select(d => d.SupplyPreference.Count()).Max();
+
+            if (this.demands.Count(d => !d.IsAllocated()) == 0)
+            {
+                // nothing to allocate
+                return true;
+            }
+
+            var hasAnySupplyPreference = this.demands.Any(d => !d.IsAllocated() && d.SupplyPreference != null);
+            if (!hasAnySupplyPreference)
+            {
+                return false;
+            }
+
+            var maxPrefs = this.demands.Where(d => !d.IsAllocated()).Select(d => d.SupplyPreference.Count()).Max();
 
             // go by increasing priority
             for (var i = 0; i < maxPrefs; i++)

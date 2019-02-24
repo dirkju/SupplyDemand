@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SupplyDemandSolver;
 
@@ -9,12 +10,32 @@ namespace Tests
     public class SolverTests
     {
         [TestMethod]
+        public void SolverNoAllocationNoPreferences()
+        {
+            var supply = new List<Supply> { new Supply { Id = 15, Capacity = 1 } };
+            var demand = new Demand() { Id = 1, Allocation = null, SupplyPreference = null };
+            var solver = new Solver(supply, new List<Demand> { demand });
+            Assert.IsTrue(solver.Solve());
+            Assert.AreEqual(15, solver.GetSolution().First().Allocation);
+        }
+
+        [TestMethod]
+        public void SolverNoPreferences()
+        {
+            var supply = new List<Supply> { new Supply { Id = 15, Capacity = 1 } };
+            var demand = new Demand() { Id = 1, Allocation = 15, SupplyPreference = null };
+            var solver = new Solver(supply, new List<Demand> { demand });
+            Assert.IsTrue(solver.Solve());
+        }
+
+        [TestMethod]
         public void SolverFailsHandlesMismatch()
         {
             var supply = new List<Supply> { new Supply { Id = 15, Capacity = 1 } };
             var demand = new Demand() { Id = 1, Allocation = null, SupplyPreference = new int[] { 12 } };
             var solver = new Solver(supply, new List<Demand> { demand });
             Assert.IsTrue(solver.Solve());
+            Assert.AreEqual(15, solver.GetSolution().First().Allocation);
         }
 
         [TestMethod]
@@ -24,6 +45,7 @@ namespace Tests
             var demand = new Demand() { Id = 1, Allocation = null, SupplyPreference = new int[] { 15 } };
             var solver = new Solver(supply, new List<Demand> { demand });
             Assert.IsTrue(solver.Solve());
+            Assert.AreEqual(15, solver.GetSolution().First().Allocation);
         }
 
         [TestMethod]
@@ -173,6 +195,7 @@ namespace Tests
             var solver = new Solver(supply, demands);
 
             Assert.IsTrue(solver.Solve());
+            Assert.IsTrue(solver.AvgMismatch < 0.126);
         }
     }
 }
