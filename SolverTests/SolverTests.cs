@@ -10,6 +10,14 @@ namespace Tests
     public class SolverTests
     {
         [TestMethod]
+        public void SolverThrowsWhenNull()
+        {
+            var supply = new List<Supply>();
+            var demand = new Demand();
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new Solver(supply, new List<Demand> { demand }));
+        }
+
+        [TestMethod]
         public void SolverNoAllocationNoPreferences()
         {
             var supply = new List<Supply> { new Supply { Id = 15, Capacity = 1 } };
@@ -194,7 +202,8 @@ namespace Tests
 
             var solver = new Solver(supply, demands);
 
-            Assert.IsTrue(solver.Solve());
+            var isComplete = solver.Solve();
+            Assert.IsTrue(isComplete);
             Assert.IsTrue(solver.AvgMismatch < 0.126);
         }
     }

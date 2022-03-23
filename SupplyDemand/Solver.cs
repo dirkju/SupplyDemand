@@ -241,21 +241,29 @@ namespace SupplyDemandSolver
         private bool ForcedAllocation()
         {
             var complete = true;
-            var random = new Random(27);
+            var demandRandom = new Random(27);
+            var supplyRandom = new Random(42);
 
             if (this.RemainingCapacity.Values.Sum() == 0)
             {
                 return false;
             }
 
-            foreach (var demand in this.demands.Where(d => !d.IsAllocated()).OrderBy(r => random.Next(10000)).ToList())
+            // process the non-allocated demands in random order.
+            foreach (var demand in this.demands.Where(d => !d.IsAllocated()).OrderBy(r => demandRandom.Next(10000)).ToList())
             {
-                foreach (var c in this.RemainingCapacity.ToList())
+                // These supplies have capacity left. Randomize them before allocation.
+                var nonEmptySupplies = this.RemainingCapacity
+                    .Where(s => s.Value > 0)
+                    .OrderBy(r => supplyRandom.Next(10000))
+                    .ToList();
+
+                foreach (var nes in nonEmptySupplies)
                 {
-                    if (supply.Single(s => s.Id == c.Key).IsCategoryMatched(demand.Category) && HasCapacity(c.Key))
+                    if (HasCapacity(nes.Key) && supply.Single(s => s.Id == nes.Key).IsCategoryMatched(demand.Category))
                     {
-                        demand.Allocation = c.Key;
-                        this.RemainingCapacity[c.Key]--;
+                        demand.Allocation = nes.Key;
+                        this.RemainingCapacity[nes.Key]--;
                     }
                 }
 
